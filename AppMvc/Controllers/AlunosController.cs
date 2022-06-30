@@ -3,6 +3,7 @@ using System.Threading.Tasks;
 using System.Net;
 using System.Web.Mvc;
 using AppMvc.Models;
+using System;
 
 namespace AppMvc.Controllers
 {
@@ -40,12 +41,16 @@ namespace AppMvc.Controllers
         [HttpPost]
         [Route("novo-aluno")]
         [ValidateAntiForgeryToken]
-        public async Task<ActionResult> Create([Bind(Include = "Id,Nome,Email,CPF,DataMatricula,Ativo")] Aluno aluno)
+        public async Task<ActionResult> Create([Bind(Include = "Id,Nome,Email,CPF, Descricao,Ativo")] Aluno aluno)
         {
             if (ModelState.IsValid)
             {
+                aluno.DataMatricula = DateTime.Now;
                 db.Alunos.Add(aluno);
                 await db.SaveChangesAsync();
+
+                TempData["Mensagem"] = "Aluno Cadastrado com sucesso";
+
                 return RedirectToAction("Index");
             }
 
@@ -68,11 +73,12 @@ namespace AppMvc.Controllers
         [HttpPost]
         [Route("editar-aluno/{id:int}")]
         [ValidateAntiForgeryToken]
-        public async Task<ActionResult> Edit([Bind(Include = "Id,Nome,Email,CPF,DataMatricula,Ativo")] Aluno aluno)
+        public async Task<ActionResult> Edit([Bind(Include = "Id,Nome,Email,CPF, Descricao,Ativo")] Aluno aluno)
         {
             if (ModelState.IsValid)
             {
                 db.Entry(aluno).State = EntityState.Modified;
+                db.Entry(aluno).Property(a => a.DataMatricula).IsModified = false;
                 await db.SaveChangesAsync();
                 return RedirectToAction("Index");
             }
