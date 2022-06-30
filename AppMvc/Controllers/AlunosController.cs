@@ -7,12 +7,14 @@ using System;
 
 namespace AppMvc.Controllers
 {
+    [Authorize]
     public class AlunosController : Controller
     {
         private readonly ApplicationDbContext db = new ApplicationDbContext();
 
         [HttpGet]
         [Route("listar-alunos")]
+        [AllowAnonymous]
         public async Task<ActionResult> Index()
         {
             return View(await db.Alunos.ToListAsync());
